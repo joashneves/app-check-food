@@ -1,12 +1,11 @@
-
 import 'package:checkfood/model/comida.dart';
 import 'package:checkfood/model/ingrediente.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 class DatabaseHelper {
-  static final DatabaseHelper _instance = DatabaseHelper._internal();
-  factory DatabaseHelper() => _instance;
+  static final DatabaseHelper instance = DatabaseHelper._internal();
+  factory DatabaseHelper() => instance;
   DatabaseHelper._internal();
 
   static Database? _database;
@@ -21,9 +20,17 @@ class DatabaseHelper {
     String path = join(await getDatabasesPath(), 'checkfood.db');
     return await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
     );
+  }
+
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await db.execute('ALTER TABLE ingrediente ADD COLUMN data_de_criacao TEXT');
+      await db.rawUpdate("UPDATE ingrediente SET data_de_criacao = ? WHERE data_de_criacao IS NULL", [DateTime.now().toIso8601String()]);
+    }
   }
 
   Future<void> _onCreate(Database db, int version) async {
@@ -43,9 +50,9 @@ class DatabaseHelper {
         id TEXT PRIMARY KEY,
         marcado INTEGER,
         nome TEXT,
+        data_de_criacao TEXT,
         data_de_aquisicao TEXT,
-        comida_id TEXT,
-        FOREIGN KEY (comida_id) REFERENCES comida (id)
+        comida_id TEXT
       )
     ''');
   }
@@ -84,20 +91,26 @@ class DatabaseHelper {
   }
 
   // Ingrediente CRUD
-  Future<void> insertIngrediente(Ingrediente ingrediente, String comidaId) async {
+  Future<void> insertIngrediente(Ingrediente ingrediente) async {
     final db = await database;
-    var map = ingrediente.toMap();
-    map['comida_id'] = comidaId;
-    await db.insert('ingrediente', map, conflictAlgorithm: ConflictAlgorithm.replace);
+    await db.insert('ingrediente', ingrediente.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  Future<List<Ingrediente>> getIngredientes(String comidaId) async {
+  Future<List<Ingrediente>> getIngredientesPorComida(String comidaId) async {
     final db = await database;
     final List<Map<String, dynamic>> maps = await db.query(
       'ingrediente',
       where: 'comida_id = ?',
       whereArgs: [comidaId],
     );
+    return List.generate(maps.length, (i) {
+      return Ingrediente.fromMap(maps[i]);
+    });
+  }
+
+  Future<List<Ingrediente>> getIngredientes() async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query('ingrediente');
     return List.generate(maps.length, (i) {
       return Ingrediente.fromMap(maps[i]);
     });
