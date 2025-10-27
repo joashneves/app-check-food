@@ -68,17 +68,23 @@ class _FoodListScreenState extends State<FoodListScreen> {
                 return ListTile(
                   title: Text(food.o_que_e_a_comida),
                   subtitle: Text('Tipo: ${food.tipo_da_comida}'),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.list),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              IngredientListScreen(foodId: food.id, foodName: food.o_que_e_a_comida),
-                        ),
-                      );
-                    },
+                  trailing: Container(
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    child: IconButton(
+                      icon: Icon(Icons.list, color: Theme.of(context).colorScheme.primary),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                IngredientListScreen(foodId: food.id, foodName: food.o_que_e_a_comida),
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 );
               },
