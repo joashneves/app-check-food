@@ -65,25 +65,30 @@ class _FoodListScreenState extends State<FoodListScreen> {
               itemCount: foodList.length,
               itemBuilder: (context, index) {
                 final food = foodList[index];
-                return ListTile(
-                  title: Text(food.o_que_e_a_comida),
-                  subtitle: Text('Tipo: ${food.tipo_da_comida}'),
-                  trailing: Container(
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    child: IconButton(
-                      icon: Icon(Icons.list, color: Theme.of(context).colorScheme.primary),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                IngredientListScreen(foodId: food.id, foodName: food.o_que_e_a_comida),
-                          ),
-                        );
-                      },
+                return Container(
+                  decoration: BoxDecoration(
+                    border: Border(bottom: BorderSide(color: Colors.grey.withOpacity(0.2))),
+                  ),
+                  child: ListTile(
+                    title: Text(food.o_que_e_a_comida),
+                    subtitle: Text('Tipo: ${food.tipo_da_comida}'),
+                    trailing: Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: IconButton(
+                        icon: Icon(Icons.list, color: Theme.of(context).colorScheme.primary),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  IngredientListScreen(foodId: food.id, foodName: food.o_que_e_a_comida),
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ),
                 );
