@@ -28,10 +28,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     return MaterialApp(
-      title: 'CheckFood',
+      title: "CheckFood",
       theme: ThemeData(
+        primarySwatch: Colors.purple,
         brightness: Brightness.light,
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        scaffoldBackgroundColor: Colors.grey[200],
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
@@ -39,6 +41,7 @@ class MyApp extends StatelessWidget {
           seedColor: Colors.deepPurple,
           brightness: Brightness.dark,
         ),
+        scaffoldBackgroundColor: Colors.grey[850],
       ),
       themeMode: themeProvider.themeMode,
       home: const FoodListScreen(),
