@@ -92,3 +92,19 @@ Para executar este projeto, você precisará ter o Flutter instalado.
     ```bash
     flutter run
     ```
+
+## Testes
+
+Para garantir a corretude da lógica de persistência de dados, foi criado um teste que valida a inserção e leitura de dados no banco de dados. O teste, localizado em `test/database_test.dart`, funciona da seguinte maneira:
+
+1.  **Inicialização**: O ambiente de teste é configurado para usar o `sqflite_common_ffi` para executar o banco de dados em memória.
+2.  **Criação de Dados**: Uma instância de `Comida` é criada com uma lista de `Ingredientes` de exemplo.
+3.  **Inserção**: O objeto `Comida` e seus `Ingredientes` são inseridos no banco de dados através do `FoodRepository`.
+4.  **Leitura**: Os dados recém-inseridos são lidos do banco de dados.
+5.  **Verificação**: O teste verifica se os dados lidos são idênticos aos dados que foram inseridos, garantindo que a persistência está funcionando corretamente.
+
+Para executar os testes, utilize o seguinte comando:
+
+```bash
+flutter test test/database_test.dart
+```
