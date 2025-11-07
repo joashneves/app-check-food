@@ -133,3 +133,7 @@ Para executar os testes, utilize o seguinte comando:
 ```bash
 flutter test test/database_test.dart
 ```
+
+# Demostração
+
+[TrabalhoGif](./docs/trabalho.GIF)
