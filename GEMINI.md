@@ -67,3 +67,7 @@ flutter test test/database_test.dart
 *   **Database Schema**: The database schema is defined in `lib/db/database_helper.dart`. The tables are `comida` and `ingrediente`. When making changes to the schema, the database `version` in `_initDatabase` must be incremented, and a migration path must be provided in the `_onUpgrade` method.
 *   **Navigation**: The app uses named routes defined in `lib/main.dart`. Use `Navigator.pushNamed()` for navigation. Data can be passed between routes using the `arguments` parameter.
 *   **Code Style**: The project uses `flutter_lints` to enforce a consistent and idiomatic Dart code style.
+
+# Demostração
+
+[TrabalhoGif](./docs/trabalho.GIF)
