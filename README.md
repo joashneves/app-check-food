@@ -72,17 +72,42 @@ O fluxo de dados na aplicação segue o padrão de arquitetura em camadas:
 
 Este fluxo garante uma separação clara de responsabilidades, tornando o código mais organizado, testável e fácil de manter.
 
+## Gerenciamento de Estado
+
+O aplicativo utiliza o pacote `provider` para o gerenciamento de estado. A escolha pelo `provider` se deu por sua simplicidade e por ser a abordagem recomendada pelo Google para o gerenciamento de estado em aplicações Flutter.
+
+O `Provider` conecta o `Repository` à `UI` da seguinte forma:
+
+1.  **`FoodProvider` e `IngredientProvider`**: Essas classes estendem `ChangeNotifier` e são responsáveis por manter o estado da lista de comidas e ingredientes, respectivamente.
+2.  **Interação com o Repositório**: Os `Providers` utilizam o `FoodRepository` para buscar e manipular os dados no banco de dados.
+3.  **Notificação da UI**: Quando os dados são alterados (e.g., uma nova comida é adicionada), o `Provider` chama o método `notifyListeners()`, que notifica os widgets que estão ouvindo (usando `Consumer` ou `Provider.of()`) para que eles se reconstruam e exibam os dados atualizados.
+
+## Navegação
+
+O aplicativo utiliza rotas nomeadas para a navegação entre as telas. As rotas são definidas no arquivo `lib/main.dart`:
+
+-   `/`: Rota inicial, que leva à `FoodListScreen`.
+-   `/new-food`: Rota para a `NewFoodScreen`, que é utilizada tanto para criar uma nova comida quanto para editar uma existente.
+
+Para passar o ID da comida para a tela de edição, o `Navigator.pushNamed()` é utilizado com o argumento `arguments`:
+
+```dart
+Navigator.pushNamed(context, '/new-food', arguments: food.id);
+```
+
+Na `NewFoodScreen`, o ID é recuperado usando `ModalRoute.of(context)?.settings.arguments`. Se o ID não for nulo, a tela entra em modo de edição e carrega os dados da comida correspondente.
+
 ## Como Executar o Projeto
 
 Para executar este projeto, você precisará ter o Flutter instalado.
 
 1.  Clone o repositório:
     ```bash
-    git clone <url-do-repositorio>
+    git clone https://github.com/joashneves/app-check-food.git
     ```
 2.  Navegue até o diretório do projeto:
     ```bash
-    cd checkfood
+    cd app-check-food.git
     ```
 3.  Instale as dependências:
     ```bash

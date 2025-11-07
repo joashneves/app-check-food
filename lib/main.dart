@@ -1,21 +1,26 @@
 import 'dart:io';
 
+import 'package:checkfood/providers/food_provider.dart';
+import 'package:checkfood/providers/ingredient_provider.dart';
 import 'package:checkfood/providers/theme_provider.dart';
 import 'package:checkfood/ui/food_list_screen.dart';
+import 'package:checkfood/ui/new_food_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-
 void main() {
-  
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
   }
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => ThemeProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => ThemeProvider()),
+        ChangeNotifierProvider(create: (context) => FoodProvider()),
+        ChangeNotifierProvider(create: (context) => IngredientProvider()),
+      ],
       child: const MyApp(),
     ),
   );
@@ -44,7 +49,11 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.grey[850],
       ),
       themeMode: themeProvider.themeMode,
-      home: const FoodListScreen(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const FoodListScreen(),
+        '/new-food': (context) => const NewFoodScreen(),
+      },
     );
   }
 }

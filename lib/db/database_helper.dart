@@ -3,19 +3,23 @@ import 'package:checkfood/model/ingrediente.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
+// Classe para gerenciar o banco de dados SQLite.
 class DatabaseHelper {
+  // Instância única da classe (Singleton).
   static final DatabaseHelper instance = DatabaseHelper._internal();
   factory DatabaseHelper() => instance;
   DatabaseHelper._internal();
 
   static Database? _database;
 
+  // Getter para o banco de dados. Se o banco de dados não foi inicializado, ele o inicializa.
   Future<Database> get database async {
     if (_database != null) return _database!;
     _database = await _initDatabase();
     return _database!;
   }
 
+  // Inicializa o banco de dados.
   Future<Database> _initDatabase() async {
     String path = join(await getDatabasesPath(), 'checkfood.db');
     return await openDatabase(
@@ -26,6 +30,7 @@ class DatabaseHelper {
     );
   }
 
+  // Chamado quando o banco de dados é atualizado.
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (oldVersion < 2) {
       await db.execute('ALTER TABLE ingrediente ADD COLUMN data_de_criacao TEXT');
@@ -33,7 +38,9 @@ class DatabaseHelper {
     }
   }
 
+  // Chamado quando o banco de dados é criado pela primeira vez.
   Future<void> _onCreate(Database db, int version) async {
+    // Cria a tabela 'comida'.
     await db.execute('''
       CREATE TABLE comida(
         id TEXT PRIMARY KEY,
@@ -45,6 +52,7 @@ class DatabaseHelper {
       )
     ''');
 
+    // Cria a tabela 'ingrediente'.
     await db.execute('''
       CREATE TABLE ingrediente(
         id TEXT PRIMARY KEY,
@@ -57,12 +65,15 @@ class DatabaseHelper {
     ''');
   }
 
-  // Comida CRUD
+  // Métodos CRUD para a tabela 'comida'.
+
+  // Insere uma nova comida no banco de dados.
   Future<void> insertComida(Comida comida) async {
     final db = await database;
     await db.insert('comida', comida.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
+  // Obtém a lista de todas as comidas do banco de dados.
   Future<List<Comida>> getComidas() async {
     final db = await database;
     final List<Map<String, dynamic>> maps = await db.query('comida');
@@ -71,6 +82,7 @@ class DatabaseHelper {
     });
   }
 
+  // Atualiza uma comida existente no banco de dados.
   Future<void> updateComida(Comida comida) async {
     final db = await database;
     await db.update(
@@ -81,6 +93,7 @@ class DatabaseHelper {
     );
   }
 
+  // Exclui uma comida do banco de dados.
   Future<void> deleteComida(String id) async {
     final db = await database;
     await db.delete(
@@ -90,12 +103,15 @@ class DatabaseHelper {
     );
   }
 
-  // Ingrediente CRUD
+  // Métodos CRUD para a tabela 'ingrediente'.
+
+  // Insere um novo ingrediente no banco de dados.
   Future<void> insertIngrediente(Ingrediente ingrediente) async {
     final db = await database;
     await db.insert('ingrediente', ingrediente.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
+  // Obtém a lista de ingredientes de uma comida específica.
   Future<List<Ingrediente>> getIngredientesPorComida(String comidaId) async {
     final db = await database;
     final List<Map<String, dynamic>> maps = await db.query(
@@ -108,6 +124,7 @@ class DatabaseHelper {
     });
   }
 
+  // Obtém a lista de todos os ingredientes.
   Future<List<Ingrediente>> getIngredientes() async {
     final db = await database;
     final List<Map<String, dynamic>> maps = await db.query('ingrediente');
@@ -116,6 +133,7 @@ class DatabaseHelper {
     });
   }
 
+  // Atualiza um ingrediente existente no banco de dados.
   Future<void> updateIngrediente(Ingrediente ingrediente) async {
     final db = await database;
     await db.update(
@@ -126,6 +144,7 @@ class DatabaseHelper {
     );
   }
 
+  // Exclui um ingrediente do banco de dados.
   Future<void> deleteIngrediente(String id) async {
     final db = await database;
     await db.delete(
