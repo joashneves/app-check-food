@@ -136,4 +136,4 @@ flutter test test/database_test.dart
 
 # Demostração
 
-[TrabalhoGif](./docs/trabalho.GIF)
+![TrabalhoGif](./docs/trabalho.GIF)
