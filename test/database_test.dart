@@ -70,5 +70,139 @@ void main() {
 
       print('\nTeste de persistência concluído com sucesso!');
     });
+
+    test('Update Comida', () async {
+      // 1. Create and insert a Comida
+      final comidaId = const Uuid().v4();
+      final now = DateTime.now();
+      final comida = Comida(
+        id: comidaId,
+        o_que_e_a_comida: 'Original Name',
+        tipo_da_comida: 'Tipo',
+        dia_para_fazer: now,
+        ingredientes_faltando: 0,
+        tem_todos_ingredientes: true,
+        ingredientes: [],
+      );
+      await foodRepository.addComida(comida);
+
+      // 2. Update the Comida
+      final updatedComida = Comida(
+        id: comidaId,
+        o_que_e_a_comida: 'Updated Name',
+        tipo_da_comida: 'Tipo',
+        dia_para_fazer: now,
+        ingredientes_faltando: 0,
+        tem_todos_ingredientes: true,
+        ingredientes: [],
+      );
+      await foodRepository.updateComida(updatedComida);
+
+      // 3. Read from the database
+      final comidasFromDb = await foodRepository.getComidas();
+      final retrievedComida = comidasFromDb.firstWhere((c) => c.id == comidaId);
+
+      // 4. Verify the data
+      expect(retrievedComida.o_que_e_a_comida, 'Updated Name');
+    });
+
+    test('Delete Comida', () async {
+      // 1. Create and insert a Comida
+      final comidaId = const Uuid().v4();
+      final now = DateTime.now();
+      final comida = Comida(
+        id: comidaId,
+        o_que_e_a_comida: 'To be deleted',
+        tipo_da_comida: 'Tipo',
+        dia_para_fazer: now,
+        ingredientes_faltando: 0,
+        tem_todos_ingredientes: true,
+        ingredientes: [],
+      );
+      await foodRepository.addComida(comida);
+
+      // 2. Delete the Comida
+      await foodRepository.deleteComida(comidaId);
+
+      // 3. Read from the database
+      final comidasFromDb = await foodRepository.getComidas();
+
+      // 4. Verify the data
+      expect(comidasFromDb.any((c) => c.id == comidaId), isFalse);
+    });
+
+    test('Add Ingrediente', () async {
+      // 1. Create and insert a Comida
+      final comidaId = const Uuid().v4();
+      final now = DateTime.now();
+      final comida = Comida(
+        id: comidaId,
+        o_que_e_a_comida: 'Comida Test',
+        tipo_da_comida: 'Tipo',
+        dia_para_fazer: now,
+        ingredientes_faltando: 1,
+        tem_todos_ingredientes: false,
+        ingredientes: [],
+      );
+      await foodRepository.addComida(comida);
+
+      // 2. Add a new Ingrediente
+      final ingrediente = Ingrediente(
+        id: const Uuid().v4(),
+        nome: 'New Ingrediente',
+        marcado: false,
+        data_de_criacao: now,
+        comida_id: comidaId,
+      );
+      await foodRepository.addIngrediente(ingrediente);
+
+      // 3. Read from the database
+      final ingredientesFromDb = await foodRepository.getIngredientesPorComida(comidaId);
+
+      // 4. Verify the data
+      expect(ingredientesFromDb.any((ing) => ing.nome == 'New Ingrediente'), isTrue);
+    });
+
+    test('Update Ingrediente', () async {
+      // 1. Create and insert a Comida with an Ingrediente
+      final comidaId = const Uuid().v4();
+      final now = DateTime.now();
+      final ingredienteId = const Uuid().v4();
+      final ingrediente = Ingrediente(
+        id: ingredienteId,
+        nome: 'Original Ingrediente',
+        marcado: false,
+        data_de_criacao: now,
+        comida_id: comidaId,
+      );
+      final comida = Comida(
+        id: comidaId,
+        o_que_e_a_comida: 'Comida Test',
+        tipo_da_comida: 'Tipo',
+        dia_para_fazer: now,
+        ingredientes_faltando: 1,
+        tem_todos_ingredientes: false,
+        ingredientes: [ingrediente],
+      );
+      await foodRepository.addComida(comida);
+
+      // 2. Update the Ingrediente
+      final updatedIngrediente = Ingrediente(
+        id: ingredienteId,
+        nome: 'Updated Ingrediente',
+        marcado: true,
+        data_de_criacao: now,
+        comida_id: comidaId,
+      );
+      await foodRepository.updateIngrediente(updatedIngrediente);
+
+      // 3. Read from the database
+      final ingredientesFromDb = await foodRepository.getIngredientesPorComida(comidaId);
+      final retrievedIngrediente = ingredientesFromDb.firstWhere((ing) => ing.id == ingredienteId);
+
+      // 4. Verify the data
+      expect(retrievedIngrediente.nome, 'Updated Ingrediente');
+      expect(retrievedIngrediente.marcado, isTrue);
+    });
   });
 }
